@@ -32,12 +32,15 @@ export default function NewsCard({ item }: Props) {
       className={`bg-white border border-slate-200 border-l-4 ${CATEGORY_ACCENT[item.category] ?? "border-l-slate-300"} rounded-r-lg rounded-bl-lg p-5 hover:shadow-md transition-shadow`}
     >
       {/* Meta row */}
-      <div className="flex items-center gap-2.5 mb-3">
-        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-          {item.source || "Market Feed"}
-        </span>
-        <span className="text-slate-300">·</span>
-        <time className="text-xs text-slate-400">{timeAgo(item.published_at)}</time>
+      <div className="flex items-center justify-between gap-2.5 mb-3">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+            <span className="text-[10px] uppercase font-bold text-slate-400">Source:</span>
+            <span className="font-semibold text-slate-800">{item.source || "Market Feed"}</span>
+          </span>
+          <span className="text-slate-300">·</span>
+          <time className="text-xs text-slate-400">{timeAgo(item.published_at)}</time>
+        </div>
       </div>
 
       {/* Headline */}
@@ -53,16 +56,22 @@ export default function NewsCard({ item }: Props) {
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-        <span className="text-xs text-slate-400 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full">
-          {item.why_it_matters || "Institutional Market Intelligence"}
-        </span>
+      <div className="flex items-center justify-between pt-3 border-t border-slate-100 gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-slate-400 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full">
+            {item.why_it_matters || "Institutional Market Intelligence"}
+          </span>
+          <span className="text-xs text-slate-400 hidden sm:inline-flex items-center gap-1">
+            <span>Source:</span>
+            <span className="font-medium text-slate-600">{item.source || "Market Feed"}</span>
+          </span>
+        </div>
         {item.url && (
           <a
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1.5 transition-colors"
+            className="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1.5 transition-colors shrink-0"
           >
             Read article
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">

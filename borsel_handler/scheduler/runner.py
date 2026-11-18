@@ -78,10 +78,10 @@ class CollectionRunner:
         ]
 
     async def run_collector(
-        self, collector: BaseCollector, db: Session, cutoff_hours: int = 48
+        self, collector: BaseCollector, db: Optional[Session] = None, cutoff_hours: int = 48
     ) -> CollectionRunSummary:
         cutoff = datetime.now(timezone.utc) - timedelta(hours=cutoff_hours)
-        log = NewsRepository.start_log(db, collector.source_name)
+        started_at = datetime.now(timezone.utc)
 
         found = 0
         inserted = 0
@@ -92,20 +92,30 @@ class CollectionRunner:
         try:
             records = await execute_with_retry(collector, cutoff=cutoff)
             found = len(records)
-            for rec in records:
-                _, is_ins, skip_reason = NewsRepository.insert_record(db, rec)
-                if is_ins:
-                    inserted += 1
-                else:
-                    duplicates += 1
         except Exception as exc:
             status = "failed"
             error_msg = str(exc)
             logger.error("Collection failed for %s: %s", collector.source_name, exc)
+            records = []
 
-        NewsRepository.finish_log(
-            db, log.id, status, found, inserted, duplicates, error_msg
-        )
+        # Use a short scoped session for writing results to avoid holding database locks across network I/O
+        owns_db = db is None
+        session = db if db is not None else SessionLocal()
+        try:
+            log = NewsRepository.start_log(session, collector.source_name)
+            for rec in records:
+                _, is_ins, skip_reason = NewsRepository.insert_record(session, rec)
+                if is_ins:
+                    inserted += 1
+                else:
+                    duplicates += 1
+
+            NewsRepository.finish_log(
+                session, log.id, status, found, inserted, duplicates, error_msg
+            )
+        finally:
+            if owns_db:
+                session.close()
 
         return CollectionRunSummary(
             source_name=collector.source_name,
@@ -114,7 +124,7 @@ class CollectionRunner:
             items_inserted=inserted,
             items_duplicate=duplicates,
             error_message=error_msg,
-            started_at=log.started_at,
+            started_at=started_at,
             finished_at=datetime.now(timezone.utc),
         )
 
@@ -130,12 +140,10 @@ class CollectionRunner:
         async with CollectionRunner._lock:
             CollectionRunner._is_running = True
             summaries: List[CollectionRunSummary] = []
-            db = SessionLocal()
             try:
                 for collector in self.collectors:
-                    summary = await self.run_collector(collector, db, cutoff_hours)
+                    summary = await self.run_collector(collector, db=None, cutoff_hours=cutoff_hours)
                     summaries.append(summary)
             finally:
-                db.close()
                 CollectionRunner._is_running = False
             return summaries
