@@ -1,8 +1,13 @@
-# ⚡ BORSEL HANDLER
+# BORSEL HANDLER
 ### **Institutional AI-Powered Indian Financial Intelligence & Market Data Engineering Platform**
 
-**S. Y. B. Tech (Artificial Intelligence & Data Science)**  
-**Project 1 [AI2001 - Artificial Intelligence & Data Engineering Lab]**  
+*Pursuing in*  
+### **Department of Artificial Intelligence and Machine Learning (AIML)**  
+### **Faculty of Science & Technology**  
+### **Vishwakarma University, Pune**  
+
+**S. Y. B. Tech (Artificial Intelligence and Machine Learning)**  
+**Project 1 [AI2001 - Artificial Intelligence and Machine Learning Lab]**  
 
 **By**  
 ### **RAUNAK RAJPUT**  
@@ -12,11 +17,6 @@
 ### **VIPUL BHAMARE**  
 
 **2026-2027**  
-
-**Pursuing in**  
-### **Department of AI/AIML/AIDS**  
-### **Faculty of Science & Technology**  
-### **Vishwakarma University, Pune**  
 
 ---
 
@@ -171,8 +171,6 @@ The platform was evaluated under two primary regimens: deterministic automated r
 
 ### 4.3 Web Application & Dashboard Interface (Screenshots)
 
-The platform features a responsive React 19 web application providing operational intelligence, full-text search, and multi-channel disclosure monitoring:
-
 #### Figure 4.1: Source Health & Operational Ops Dashboard
 Displaying **7,084 total indexed articles**, **42,818 duplicates prevented**, **330 collection runs**, and real-time operational status across NSE, BSE, RBI, SEBI, PIB, and financial RSS channels:
 ![Source Health & Operations Dashboard](../docs/ui_source_health_ops.jpg)
@@ -190,7 +188,7 @@ Targeted single-stock feed (e.g. Tata Consultancy Services - `TCS`) segregating 
 ### 4.4 Deduplication & Columnar Storage Benchmarks
 - **Syndication Noise Reduction:** Over **42,818 duplicate news items** have been detected and prevented from polluting analytical databases, routing duplicate links to `article_duplicates` while saving critical LLM context tokens.
 - **Columnar Parquet Compression:** 10,000 corporate records compress to 1.4 MB with Snappy (4.8x compression factor over raw JSON).
-- **Query Performance:** Indexed compound queries on `(symbol, category, published_at)` under SQLite WAL mode yielded sub-15ms median response times with zero database lock timeouts.
+- **Query Performance:** Indexed compound queries on `(symbol, category, published_at)` under SQLite WAL mode yielded sub-15ms median response times ($p_{50} = 11.2\,\text{ms}$) with zero database lock timeouts.
 
 ---
 
